@@ -54,9 +54,18 @@ endfunction
 
 
 function! s:list_dir_contents(path)
-  return sort(map(glob(a:path.'*', 1, 1)
-        \ , '{"label": s:dir_label(v:val), "fakepath": s:dir_fakepath(v:val)}')
-        \ , '<SID>sort')
+  let dirs = []
+  let files = []
+  for p in glob(a:path.'*', 1, 1)
+    if isdirectory(p)
+      call add(dirs,
+            \ {'label': fnamemodify(p, ':t').'/', 'fakepath': 'local:'.p.'/'})
+    else
+      call add(files,
+            \ {'label': fnamemodify(p, ':t'), 'fakepath': 'local:'.p})
+    endif
+  endfor
+  return sort(dirs, '<SID>sort') + sort(files, '<SID>sort')
 endfunction
 
 
