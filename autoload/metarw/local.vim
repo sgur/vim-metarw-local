@@ -140,9 +140,8 @@ endfunction
 
 function! metarw#local#fallback_dir(path)
   if isdirectory(a:path)
-    let l:path = substitute(a:path, '\\', '/', 'g')
-    execute 'edit local:'.l:path
-    execute 'bwipeout' l:path
+    execute 'edit local:'.a:path
+    execute 'bwipeout' a:path
   endif
 endfunction
 

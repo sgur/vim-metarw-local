@@ -33,7 +33,7 @@ set cpo&vim
 
 augroup metarw_local
   autocmd!
-  autocmd BufNew * nested call metarw#local#fallback_dir(expand('<amatch>'))
+  autocmd BufAdd * nested call metarw#local#fallback_dir(expand('<amatch>'))
 augroup END
 
 let &cpo = s:save_cpo
