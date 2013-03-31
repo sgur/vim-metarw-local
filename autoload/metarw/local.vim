@@ -59,29 +59,20 @@ function! s:list_dir_contents(path)
   for p in glob(a:path.'*', 1, 1)
     if isdirectory(p)
       call add(dirs,
-            \ {'label': fnamemodify(p, ':t').'/', 'fakepath': 'local:'.p.'/'})
+            \ {'path': p, 'label': fnamemodify(p, ':t').'/', 'fakepath': 'local:'.p.'/'})
     else
       call add(files,
-            \ {'label': fnamemodify(p, ':t'), 'fakepath': 'local:'.p})
+            \ {'path': p, 'label': fnamemodify(p, ':t'), 'fakepath': 'local:'.p})
     endif
   endfor
-  return sort(dirs, '<SID>sort') + sort(files, '<SID>sort')
+  return map(sort(dirs, '<SID>sort') + sort(files, '<SID>sort')
+        \ , '{"label" : printf("%-30S\t%-S\t%-10S\t%-10S", v:val.label, strftime("%c", getftime(v:val.path)), getfsize(v:val.path), getfperm(v:val.path)), "fakepath" : v:val.fakepath}')
 endfunction
 
 
 function! s:sort(v1, v2)
   return a:v1.label == a:v2.label ? 0
         \ : a:v1.label > a:v2.label ? 1 : -1
-endfunction
-
-
-function! s:dir_label(str)
-  return (isdirectory(a:str) ? '+': '') . fnamemodify(a:str, ':t')
-endfunction
-
-
-function! s:dir_fakepath(str)
-  return 'local:'.v:val.(isdirectory(v:val) ? '/' : '')
 endfunction
 
 
