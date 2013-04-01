@@ -1,5 +1,5 @@
 "=============================================================================
-" FILE: autoload/metarw/local.vim
+" FILE: plugin/local.vim
 " AUTHOR: sgur <sgurrr+vim@gmail.com>
 " License: MIT license  {{{
 "     Permission is hereby granted, free of charge, to any person obtaining
@@ -24,17 +24,22 @@
 "=============================================================================
 
 if exists('g:loaded_metarw_local') && g:loaded_metarw_local
-  " finish
+  finish
 endif
 let g:loaded_metarw_local = 1
 
 let s:save_cpo = &cpo
 set cpo&vim
 
-augroup metarw_local
-  autocmd!
-  autocmd BufAdd * nested call metarw#local#fallback_dir(expand('<amatch>'))
-augroup END
+" Variables
+let g:metarw_local_enable_fallback = get(g:, 'metarw_local_enable_fallback', 0)
+
+if g:metarw_local_enable_fallback
+  augroup metarw_local
+    autocmd!
+    autocmd BufAdd * nested call metarw#local#fallback_dir(expand('<amatch>'))
+  augroup END
+endif
 
 let &cpo = s:save_cpo
 unlet s:save_cpo
