@@ -42,11 +42,11 @@ endfunction
 
 
 function! s:list_dir(path)
-  let _ = ['browse', s:list_dir_contents(a:path)]
   let parent_dir = fnamemodify(a:path, ':p:h:h').'/'
-  call insert(_[1],
-        \ { 'label' : '..'
-        \ , 'fakepath' : 'local:'.parent_dir})
+  let _ = ['browse'
+        \ , [{ 'label' : '..', 'fakepath' : 'local:'.parent_dir}]
+        \ + s:list_dir_contents(a:path)
+        \ ]
   execute 'nnoremap <buffer> U :<C-u>edit local:'.parent_dir.'<CR>'
   execute 'nnoremap <buffer> <BS> :<C-u>edit local:'.parent_dir.'<CR>'
   return _
@@ -66,7 +66,16 @@ function! s:list_dir_contents(path)
     endif
   endfor
   return map(sort(dirs, '<SID>sort') + sort(files, '<SID>sort')
-        \ , '{"label" : printf("%-30S\t%-S\t%10S\t%-10S", v:val.label, strftime("%c", getftime(v:val.path)), getfsize(v:val.path), getfperm(v:val.path)), "fakepath" : v:val.fakepath}')
+        \ , '{"label" : s:label(v:val), "fakepath" : v:val.fakepath}')
+endfunction
+
+
+function! s:label(path)
+  return printf("%-30S\t%-S\t%10S\t%-10S"
+        \ , a:path.label
+        \ , strftime("%c", getftime(a:path.path))
+        \ , getfsize(a:path.path)
+        \ , getfperm(a:path.path))
 endfunction
 
 
