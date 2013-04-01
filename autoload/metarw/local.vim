@@ -26,62 +26,9 @@
 
 function! metarw#local#read(fakepath)
   let _ = s:parse_incomplete_fakepath(a:fakepath)
-  return _.file_given_p ? s:view_file(_.path) :
-        \ _.dir_given_p ? s:list_dir(_.path) : ['error', 'cannot read']
-endfunction
-
-
-function! s:view_file(path)
-  let parent_dir = fnamemodify(a:path, ':p:h').'/'
-  execute 'nnoremap <buffer> U :<C-u>edit local:'.parent_dir.'<CR>'
-  execute 'nnoremap <buffer> <BS> :<C-u>edit local:'.parent_dir.'<CR>'
-  execute 'nnoremap <buffer> <CR> :<C-u>edit '.a:path.'<CR>'
-  setlocal readonly
-  return ['read', a:path]
-endfunction
-
-
-function! s:list_dir(path)
-  let parent_dir = fnamemodify(a:path, ':p:h:h').'/'
-  let _ = ['browse'
-        \ , [{ 'label' : '..', 'fakepath' : 'local:'.parent_dir}]
-        \ + s:list_dir_contents(a:path)
-        \ ]
-  execute 'nnoremap <buffer> U :<C-u>edit local:'.parent_dir.'<CR>'
-  execute 'nnoremap <buffer> <BS> :<C-u>edit local:'.parent_dir.'<CR>'
-  return _
-endfunction
-
-
-function! s:list_dir_contents(path)
-  let dirs = []
-  let files = []
-  for p in glob(a:path.'*', 1, 1)
-    if isdirectory(p)
-      call add(dirs,
-            \ {'path': p, 'label': fnamemodify(p, ':t').'/', 'fakepath': 'local:'.p.'/'})
-    else
-      call add(files,
-            \ {'path': p, 'label': fnamemodify(p, ':t'), 'fakepath': 'local:'.p})
-    endif
-  endfor
-  return map(sort(dirs, '<SID>sort') + sort(files, '<SID>sort')
-        \ , '{"label" : s:label(v:val), "fakepath" : v:val.fakepath}')
-endfunction
-
-
-function! s:label(path)
-  return printf("%-30S\t%-S\t%10S\t%-10S"
-        \ , a:path.label
-        \ , strftime("%c", getftime(a:path.path))
-        \ , getfsize(a:path.path)
-        \ , getfperm(a:path.path))
-endfunction
-
-
-function! s:sort(v1, v2)
-  return a:v1.label == a:v2.label ? 0
-        \ : a:v1.label > a:v2.label ? 1 : -1
+  return _.file_given_p ? ['read', metarw#local#file#setup(_.path)]
+        \ : _.dir_given_p ? ['browse', metarw#local#directory#setup(_.path)]
+        \ : ['error', 'cannot read']
 endfunction
 
 
