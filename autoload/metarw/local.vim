@@ -66,7 +66,7 @@ function! s:list_dir_contents(path)
     endif
   endfor
   return map(sort(dirs, '<SID>sort') + sort(files, '<SID>sort')
-        \ , '{"label" : printf("%-30S\t%-S\t%-10S\t%-10S", v:val.label, strftime("%c", getftime(v:val.path)), getfsize(v:val.path), getfperm(v:val.path)), "fakepath" : v:val.fakepath}')
+        \ , '{"label" : printf("%-30S\t%-S\t%10S\t%-10S", v:val.label, strftime("%c", getftime(v:val.path)), getfsize(v:val.path), getfperm(v:val.path)), "fakepath" : v:val.fakepath}')
 endfunction
 
 
