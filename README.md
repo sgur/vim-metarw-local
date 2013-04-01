@@ -6,18 +6,19 @@
 
 ## List current directory
 
-`:edit local:`
+    :edit local:
 
 ## List home direcotry
 
-`:edit local:~/`
+    :edit local:~/
 
 ## View a file
 
-`:edit local:~/.vimrc`
+    :edit local:~/.vimrc
 
 # Customization
 
 ## Use `local:` scheme for opening directory with `:edit`
 
-`let g:metarw_local_enable_fallback = 1`
+    let g:metarw_local_enable_fallback = 1
+    let g:loaded_netrwPlugin = 1 " Disable netrw
