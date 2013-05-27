@@ -97,8 +97,16 @@ function! s:rm(dir)
   if !s:confirm('Delete', path)
     return
   endif
-  if filewritable(path) != 1 || delete(path)
-    call s:error('Removing '.path.' failed.')
+  if isdirectory(path)
+    let cmd = has('win32') ? 'rmdir /S /Q ' : 'rm -rf '
+    call system(cmd . fnameescape(expand(path)))
+    if v:shell_error != 0
+      call s:error('Removing '.path.' failed.')
+    endif
+  else
+    if filewritable(path) != 1 || delete(path)
+      call s:error('Removing '.path.' failed.')
+    endif
   endif
   call s:redraw()
 endfunction
