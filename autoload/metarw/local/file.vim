@@ -28,6 +28,6 @@ function! metarw#local#file#setup(path)
   execute 'nnoremap <buffer> U :<C-u>edit local:'.parent_dir.'<CR>'
   execute 'nnoremap <buffer> <BS> :<C-u>edit local:'.parent_dir.'<CR>'
   execute 'nnoremap <buffer> <CR> :<C-u>edit '.a:path.'<CR>'
-  setlocal readonly
+  setlocal readonly bufhidden=wipe
   return a:path
 endfunction
