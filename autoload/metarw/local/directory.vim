@@ -42,8 +42,8 @@ function! s:list(path)
       call add(dirs,
             \ {'path': p, 'label': fnamemodify(p, ':t').'/', 'fakepath': 'local:'.p.'/'})
     else
-      call add(files,
-            \ {'path': p, 'label': fnamemodify(p, ':t'), 'fakepath': 'local:'.p})
+      call add(files, {'path': p, 'label': fnamemodify(p, ':t')
+            \ , 'fakepath': g:metarw_local_enable_preview ? 'local:' . p : p})
     endif
   endfor
   return map(sort(dirs, '<SID>sort') + sort(files, '<SID>sort')
@@ -59,7 +59,7 @@ endfunction
 
 function! s:label(path)
   return printf("%-30S\t%-S\t%10S\t%10s"
-        \ , a:path.label
+        \ , strpart(a:path.label, 0, 30)
         \ , strftime("%c", getftime(a:path.path))
         \ , getfsize(a:path.path)
         \ , getfperm(a:path.path))
