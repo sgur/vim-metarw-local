@@ -34,6 +34,7 @@ set cpo&vim
 " Variables
 let g:metarw_local_enable_fallback = get(g:, 'metarw_local_enable_fallback', 0)
 let g:metarw_local_enable_preview = get(g:, 'metarw_local_enable_preview', 0)
+let g:metarw_local_visible_dot = get(g:, 'metarw_local_visible_dot', 0)
 
 if g:metarw_local_enable_fallback
   augroup metarw_local

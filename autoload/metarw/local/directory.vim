@@ -24,11 +24,14 @@
 "=============================================================================
 
 function! metarw#local#directory#setup(path)
+  let b:metarw_local_visible_dot =
+        \ get(b:, 'metarw_local_visible_dot', g:metarw_local_visible_dot)
   let parent_dir = fnamemodify(a:path, ':p:h:h').'/'
   execute 'nnoremap <buffer> U :<C-u>edit local:'.parent_dir.'<CR>'
   execute 'nnoremap <buffer> <BS> :<C-u>edit local:'.parent_dir.'<CR>'
   execute 'nnoremap <buffer> D :<C-u>call <SID>rm('''.a:path.''')<CR>'
   execute 'nnoremap <buffer> R :<C-u>call <SID>mv('''.a:path.''')<CR>'
+  execute 'nnoremap <buffer> . :<C-u>call <SID>dot()<CR>'
   return [{ 'label' : '..', 'fakepath' : 'local:'.parent_dir}]
         \ + s:list(a:path)
 endfunction
@@ -37,12 +40,15 @@ endfunction
 function! s:list(path)
   let dirs = []
   let files = []
-  for p in glob(a:path.'*', 1, 1)
-    if isdirectory(p)
+  for p in glob(a:path.'*', 1, 1) + (b:metarw_local_visible_dot ? glob(a:path.'.*', 1, 1) : [])
+    let t = fnamemodify(p, ':t')
+    if t == '.' || t == '..'
+      continue
+    elseif isdirectory(p)
       call add(dirs,
-            \ {'path': p, 'label': fnamemodify(p, ':t').'/', 'fakepath': 'local:'.p.'/'})
+            \ {'path': p, 'label': t.'/', 'fakepath': 'local:'.p.'/'})
     else
-      call add(files, {'path': p, 'label': fnamemodify(p, ':t')
+      call add(files, {'path': p, 'label': t
             \ , 'fakepath': g:metarw_local_enable_preview ? 'local:' . p : p})
     endif
   endfor
@@ -126,5 +132,11 @@ function! s:mv(dir)
       call s:error('Moving '.src.' failed.')
     endif
   endtry
+  call s:redraw()
+endfunction
+
+
+function! s:dot()
+  let b:metarw_local_visible_dot = !b:metarw_local_visible_dot
   call s:redraw()
 endfunction
