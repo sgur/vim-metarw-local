@@ -53,7 +53,7 @@ endfunction
 function! s:split_path(path)
   let matchend = matchend(a:path, '.\+[\\/]')
   return matchend == -1 ? ['.', a:path]
-        \ : [_.path[: matchend-1], _.path[matchend :]]
+        \ : [a:path[: matchend-1], a:path[matchend :]]
 endfunction
 
 
